@@ -236,17 +236,17 @@ body {
 }
 
 .input-container {
-    padding: 24px 20px;
+    padding: 28px 20px;
     display: flex;
     flex-direction: column;
-    gap: 0;
+    gap: 8px;
 }
 
 .input-block {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    padding: 24px 0;
+    gap: 16px;
+    padding: 32px 0;
     background: transparent;
     border-radius: 0;
     border: none;

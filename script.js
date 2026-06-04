@@ -166,7 +166,7 @@ function drawWatermarkPattern(targetCtx) {
                     targetCtx.drawImage(img, x - drawW / 2, y - drawH / 2, drawW, drawH);
                 }
             } else {
-                targetCtx.fillText('競輪', x, y);
+                targetCtx.fillText('KEIRIN', x, y);
             }
         }
     }
