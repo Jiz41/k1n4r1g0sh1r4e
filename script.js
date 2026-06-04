@@ -1,15 +1,13 @@
 // ========================================
-// FS Striders - Player Profile Generator
-// Ver 1.2
-// 2026年2月12日 / 2026年6月更新
-// フルストライド100万本売れてくれ！！！！！！！！
+// 華耀天輪 己成拵 貳ツ目 - Player Profile Generator
+// Ver 1.0
+// 2026年6月
 //
 // 作成者: Musyn Reagan (ファン制作)
 // 非公式ツールです。公式とは一切関係ありません。
-// バグ報告・改善案は気軽にムシンちゃんのXへどうぞ。
 // ========================================
 
-// ========== 枠番カラー定義 ==========
+// ========== 車番カラー定義 ==========
 const WAKU_COLORS = {
     "1": { bg: "#ffffff", tx: "#000000" },
     "2": { bg: "#000000", tx: "#ffffff" },
@@ -18,7 +16,8 @@ const WAKU_COLORS = {
     "5": { bg: "#ffdb00", tx: "#000000" },
     "6": { bg: "#009944", tx: "#ffffff" },
     "7": { bg: "#f39800", tx: "#ffffff" },
-    "8": { bg: "#e5007f", tx: "#ffffff" }
+    "8": { bg: "#e5007f", tx: "#ffffff" },
+    "9": { bg: "#7b2d8b", tx: "#ffffff" }
 };
 
 // ========== テキストデフォルト値 ==========
@@ -30,43 +29,39 @@ const CARD_WIDTH  = 850;
 const CARD_HEIGHT = 580;
 
 // ========== レイアウト定数 ==========
-const WAKU_BAR_WIDTH    = 100;   // 枠番カラーバー幅
-const HEADER_HEIGHT     = 155;   // ヘッダーエリア高さ
-const GREY_OVERLAY_X    = 340;   // グレー背景の開始X
-const ICON_X            = 185;   // アイコン中心X座標
-const ICON_Y            = 77.5;  // アイコン中心Y座標
-const ICON_RADIUS_OUTER = 55;    // アイコン枠の半径
-const ICON_RADIUS_INNER = 50;    // アイコン描画半径
-const ICON_RADIUS_EMPTY = 40;    // 未設定アイコン半径
-const TEXT_X            = 260;   // 名前・SNS テキスト開始X
-const CONTENT_LEFT      = 130;   // コンテンツ左マージン
-const COL2_X            = 475;   // 右カラム開始X
-const CONTENT_WIDTH     = 690;   // コンテンツ幅
-const COMMENT_LINE_Y    = 470;   // コメント区切り線Y座標
-const DOT_PITCH         = 12;    // ドット柄の間隔（px）
+const WAKU_BAR_WIDTH    = 100;
+const HEADER_HEIGHT     = 155;
+const GREY_OVERLAY_X    = 340;
+const ICON_X            = 185;
+const ICON_Y            = 77.5;
+const ICON_RADIUS_OUTER = 55;
+const ICON_RADIUS_INNER = 50;
+const ICON_RADIUS_EMPTY = 40;
+const TEXT_X            = 260;
+const CONTENT_LEFT      = 130;
+const COL2_X            = 475;
+const CONTENT_WIDTH     = 690;
+const COMMENT_LINE_Y    = 470;
+const DOT_PITCH         = 12;
 
 // ========== 状態変数 ==========
 let dotPatternCanvas = null;
-let watermarkImages  = { 騎乗: null, いななき: null, 仔馬: null };
+let watermarkImages  = { keirin3: null, keirin4: null, keirin5: null };
 let currentWaku      = "3";
-let currentPattern   = "騎乗";
+let currentPattern   = "無地";
 let userIconImage    = null;
 let updateTimer      = null;
 
 const cardData = {
     waku:      "3",
-    name:      "JOCKEY NAME",
-    sns:       "@---",
-    exp:       "馬歴 / Horse History: ---",
-    hard:      "主なハード / Platform: ---",
-    favHorse:  "---",
-    favJockey: "---",
-    blood:     "---",
+    name:      "RIDER NAME",
+    sns:       "---",
+    exp:       "競輪歴 / Keirin History: ---",
+    favRider:  "---",
+    region:    "---",
     bank:      "---",
-    coat:      "---",
     memorable: "---",
     style:     "---",
-    way:       "---",
     time:      "---",
     comment:   "...よろしくお願いします"
 };
@@ -81,15 +76,11 @@ const inputs = {
     n:         document.getElementById('in-n'),
     sns:       document.getElementById('in-sns'),
     exp:       document.getElementById('in-exp'),
-    hard:      document.getElementById('in-hard'),
-    favHorse:  document.getElementById('in-fav-horse'),
-    favJockey: document.getElementById('in-fav-jockey'),
-    blood:     document.getElementById('in-blood'),
+    favRider:  document.getElementById('in-fav-rider'),
+    region:    document.getElementById('in-region'),
     bank:      document.getElementById('in-bank'),
-    coat:      document.getElementById('in-coat'),
     memorable: document.getElementById('in-memorable'),
     style:     document.getElementById('in-style'),
-    way:       document.getElementById('in-way'),
     time:      document.getElementById('in-time'),
     com:       document.getElementById('in-com')
 };
@@ -98,14 +89,10 @@ const counters = {
     n:         document.getElementById('counter-n'),
     sns:       document.getElementById('counter-sns'),
     exp:       document.getElementById('counter-exp'),
-    hard:      document.getElementById('counter-hard'),
-    favHorse:  document.getElementById('counter-fav-horse'),
-    favJockey: document.getElementById('counter-fav-jockey'),
-    blood:     document.getElementById('counter-blood'),
+    favRider:  document.getElementById('counter-fav-rider'),
+    region:    document.getElementById('counter-region'),
     bank:      document.getElementById('counter-bank'),
-    coat:      document.getElementById('counter-coat'),
     memorable: document.getElementById('counter-memorable'),
-    way:       document.getElementById('counter-way'),
     time:      document.getElementById('counter-time'),
     com:       document.getElementById('counter-com')
 };
@@ -123,7 +110,6 @@ const cropCancelBtn  = document.getElementById('crop-cancel');
 
 // ========== 初期化 ==========
 
-// ドット柄パターンをオフスクリーンキャンバスに生成
 function createDotPattern() {
     const patCanvas = document.createElement('canvas');
     patCanvas.width  = CARD_WIDTH;
@@ -141,9 +127,8 @@ function createDotPattern() {
     dotPatternCanvas = patCanvas;
 }
 
-// js.png / ut.png を非同期でプリロードし、完了後にカードを再描画する
 function initWatermark() {
-    [['騎乗', 'js.png'], ['いななき', 'ut.png'], ['仔馬', 'ku.png']].forEach(([key, src]) => {
+    [['keirin3', 'images/keirin3.png'], ['keirin4', 'images/keirin4.png'], ['keirin5', 'images/keirin5.png']].forEach(([key, src]) => {
         const img = new Image();
         img.onload = () => { watermarkImages[key] = img; drawCard(); };
         img.onerror = () => {};
@@ -151,10 +136,9 @@ function initWatermark() {
     });
 }
 
-// 透かしパターン描画: 画像と「FSS」テキストを45°タイルで全面に敷く
 function drawWatermarkPattern(targetCtx) {
-    const img      = watermarkImages[currentPattern];
-    const TARGET = 110;  // 画像の収まる正方形ボックスサイズ（アスペクト比維持のための上限）
+    const img    = watermarkImages[currentPattern];
+    const TARGET = 110;
     const STEP   = 170;
 
     targetCtx.save();
@@ -182,7 +166,7 @@ function drawWatermarkPattern(targetCtx) {
                     targetCtx.drawImage(img, x - drawW / 2, y - drawH / 2, drawW, drawH);
                 }
             } else {
-                targetCtx.fillText('FSS', x, y);
+                targetCtx.fillText('競輪', x, y);
             }
         }
     }
@@ -200,16 +184,13 @@ function getShadowColor(hex) {
     return `rgb(${Math.floor(r*0.4)},${Math.floor(g*0.4)},${Math.floor(b*0.4)})`;
 }
 
-// カードをキャンバスに描画する
 function drawCard(targetCtx = ctx) {
     const theme = WAKU_COLORS[currentWaku];
 
-    // 背景（白ベース）
     targetCtx.clearRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
     targetCtx.fillStyle = '#ffffff';
     targetCtx.fillRect(0, 0, CARD_WIDTH, CARD_HEIGHT);
 
-    // 右側グレー背景
     targetCtx.fillStyle = '#f2f2f2';
     targetCtx.beginPath();
     targetCtx.moveTo(GREY_OVERLAY_X, 0);
@@ -219,14 +200,12 @@ function drawCard(targetCtx = ctx) {
     targetCtx.closePath();
     targetCtx.fill();
 
-    // 背景パターンを重ねる（選択に応じて切り替え）
     if (currentPattern === '無地') {
         if (dotPatternCanvas) targetCtx.drawImage(dotPatternCanvas, 0, 0);
     } else {
         drawWatermarkPattern(targetCtx);
     }
 
-    // カード外枠（ダブルライン）
     targetCtx.strokeStyle = '#000000';
     targetCtx.lineWidth = 2;
     targetCtx.strokeRect(2, 2, CARD_WIDTH - 4, CARD_HEIGHT - 4);
@@ -234,7 +213,6 @@ function drawCard(targetCtx = ctx) {
     targetCtx.lineWidth = 1;
     targetCtx.strokeRect(6, 6, CARD_WIDTH - 12, CARD_HEIGHT - 12);
 
-    // 枠番カラーバー
     targetCtx.fillStyle = theme.bg;
     targetCtx.fillRect(0, 0, WAKU_BAR_WIDTH, CARD_HEIGHT);
     targetCtx.strokeStyle = '#000000';
@@ -244,14 +222,12 @@ function drawCard(targetCtx = ctx) {
     targetCtx.lineTo(WAKU_BAR_WIDTH, CARD_HEIGHT);
     targetCtx.stroke();
 
-    // 枠番数字
     targetCtx.fillStyle = theme.tx;
     targetCtx.font = '900 85px sans-serif';
     targetCtx.textAlign = 'center';
     targetCtx.textBaseline = 'middle';
     targetCtx.fillText(currentWaku, WAKU_BAR_WIDTH / 2, CARD_HEIGHT / 2);
 
-    // ヘッダーエリア（半透明白）
     targetCtx.fillStyle = 'rgba(255, 255, 255, 0.5)';
     targetCtx.fillRect(WAKU_BAR_WIDTH, 0, CARD_WIDTH - WAKU_BAR_WIDTH, HEADER_HEIGHT);
     targetCtx.strokeStyle = '#000000';
@@ -261,14 +237,12 @@ function drawCard(targetCtx = ctx) {
     targetCtx.lineTo(CARD_WIDTH, HEADER_HEIGHT);
     targetCtx.stroke();
 
-    // アイコン枠（ダブルリング: 外=枠色、内=白細線）
     targetCtx.strokeStyle = theme.bg;
     targetCtx.lineWidth = 5;
     targetCtx.beginPath();
     targetCtx.arc(ICON_X, ICON_Y, ICON_RADIUS_OUTER, 0, Math.PI * 2);
     targetCtx.stroke();
 
-    // アイコン背景（白）
     targetCtx.fillStyle = '#ffffff';
     targetCtx.fill();
 
@@ -278,7 +252,6 @@ function drawCard(targetCtx = ctx) {
     targetCtx.arc(ICON_X, ICON_Y, 52, 0, Math.PI * 2);
     targetCtx.stroke();
 
-    // アイコン描画（画像 or プレースホルダー）
     if (userIconImage) {
         targetCtx.save();
         targetCtx.beginPath();
@@ -305,7 +278,6 @@ function drawCard(targetCtx = ctx) {
         targetCtx.fillText('?', ICON_X, ICON_Y);
     }
 
-    // 名前・SNS・経歴テキスト
     targetCtx.fillStyle = '#000000';
     targetCtx.textAlign = 'left';
     targetCtx.textBaseline = 'top';
@@ -317,26 +289,21 @@ function drawCard(targetCtx = ctx) {
 
     targetCtx.font = '800 13px sans-serif';
     targetCtx.fillStyle = '#333333';
-    targetCtx.fillText(cardData.exp,  TEXT_X, 83);
-    targetCtx.fillText(cardData.hard, TEXT_X, 100);
+    targetCtx.fillText(cardData.exp, TEXT_X, 83);
 
     targetCtx.fillStyle = '#000000';
     targetCtx.font = '900 14px sans-serif';
-    targetCtx.fillText('SNS: ' + cardData.sns, TEXT_X, 118);
+    targetCtx.fillText('SNS: ' + cardData.sns, TEXT_X, 100);
 
-    // コンテンツエリアのクリップ設定
     targetCtx.save();
     targetCtx.beginPath();
     targetCtx.rect(WAKU_BAR_WIDTH, HEADER_HEIGHT + 10, CARD_WIDTH - WAKU_BAR_WIDTH - 20, CARD_HEIGHT - HEADER_HEIGHT - 10 - 60);
     targetCtx.clip();
 
-    // カラーバー付きラベル＋値を描画するローカル関数（28px行高）
     function drawItem(x, y, label, value, width) {
         const height = 26;
-        // 影
         targetCtx.fillStyle = getShadowColor(theme.bg);
         targetCtx.fillRect(x + 2, y + 2, 6, height);
-        // 本体
         targetCtx.fillStyle = theme.bg;
         targetCtx.fillRect(x, y, 6, height);
 
@@ -349,26 +316,23 @@ function drawCard(targetCtx = ctx) {
         wrapText(targetCtx, value, x + 12, y + 14, width - 30, 20, 1);
     }
 
-    // 競馬の好みセクション
+    // 競輪の好みセクション
     const SEC1_Y = HEADER_HEIGHT + 22;   // 177
     targetCtx.fillStyle = '#1a1a1a';
     targetCtx.fillRect(CONTENT_LEFT, SEC1_Y, CONTENT_WIDTH, 21);
     targetCtx.fillStyle = '#e8e8e8';
     targetCtx.font = '900 13px sans-serif';
-    targetCtx.fillText('競馬の好み / Favorite (Real)', CONTENT_LEFT + 12, SEC1_Y + 5);
+    targetCtx.fillText('競輪の好み / Favorite (Keirin)', CONTENT_LEFT + 12, SEC1_Y + 5);
 
     const R1 = SEC1_Y + 28;   // 205
     const R2 = R1 + 36;       // 241
-    const R3 = R2 + 36;       // 277
-    drawItem(CONTENT_LEFT, R1, '推し馬 / Fav Horse',          cardData.favHorse,  330);
-    drawItem(COL2_X,       R1, '推し騎手 / Fav Jockey',        cardData.favJockey, 330);
-    drawItem(CONTENT_LEFT, R2, '好きな血統 / Fav Pedigree',    cardData.blood,     330);
-    drawItem(COL2_X,       R2, '好きな競馬場 / Fav Racecourse', cardData.bank,      330);
-    drawItem(CONTENT_LEFT, R3, '好きな毛色 / Fav Coat',        cardData.coat,      330);
-    drawItem(COL2_X,       R3, '思い出のレース / Memorable',   cardData.memorable, 330);
+    drawItem(CONTENT_LEFT, R1, '推し選手 / Fav Rider',              cardData.favRider,  330);
+    drawItem(COL2_X,       R1, '好きな地区・ライン / Fav Region & Line', cardData.region,    330);
+    drawItem(CONTENT_LEFT, R2, '好きなバンク / Fav Velodrome',       cardData.bank,      330);
+    drawItem(COL2_X,       R2, '思い出のレース / Memorable',         cardData.memorable, 330);
 
     // プレイの傾向セクション
-    const SEC2_Y = R3 + 46;   // 323
+    const SEC2_Y = R2 + 46;   // 323
     targetCtx.fillStyle = '#1a1a1a';
     targetCtx.fillRect(CONTENT_LEFT, SEC2_Y, CONTENT_WIDTH, 21);
     targetCtx.fillStyle = '#e8e8e8';
@@ -376,14 +340,11 @@ function drawCard(targetCtx = ctx) {
     targetCtx.fillText('プレイの傾向 / Playstyle (Game)', CONTENT_LEFT + 12, SEC2_Y + 5);
 
     const R4 = SEC2_Y + 28;   // 351
-    const R5 = R4 + 38;       // 389
-    drawItem(CONTENT_LEFT, R4, '好きな脚質 / Favorite Strategy',  cardData.style, 330);
+    drawItem(CONTENT_LEFT, R4, '好きな脚質 / Favorite Strategy',   cardData.style, 330);
     drawItem(COL2_X,       R4, 'よく遊ぶ時間帯 / Usual Play Time', cardData.time,  330);
-    drawItem(CONTENT_LEFT, R5, '騎乗スタイル / Riding Style',      cardData.way,   CONTENT_WIDTH);
 
     targetCtx.restore();
 
-    // コメント区切り線
     targetCtx.strokeStyle = '#555555';
     targetCtx.lineWidth = 1;
     targetCtx.beginPath();
@@ -391,42 +352,34 @@ function drawCard(targetCtx = ctx) {
     targetCtx.lineTo(CARD_WIDTH, COMMENT_LINE_Y);
     targetCtx.stroke();
 
-    // 一言メッセージ
     targetCtx.fillStyle = '#000000';
     const commentLength   = cardData.comment.length;
     const commentFontSize = commentLength > 60 ? 15 : commentLength > 30 ? 18 : 21;
     targetCtx.font = `900 ${commentFontSize}px sans-serif`;
     wrapText(targetCtx, cardData.comment, CONTENT_LEFT, COMMENT_LINE_Y + 12, CONTENT_WIDTH, commentFontSize * 1.3, 3);
 
-    // コピーライト
     targetCtx.fillStyle = 'rgba(0, 0, 0, 0.18)';
     targetCtx.font = 'bold 11px sans-serif';
     targetCtx.textAlign = 'right';
     targetCtx.fillText('© 2026 Musyn Reagan', CARD_WIDTH - 12, CARD_HEIGHT - 12);
 }
 
-// 入力値をcardDataに反映する
 function updateCardData() {
     cardData.waku = currentWaku;
-    cardData.name = inputs.n.value.trim() || "JOCKEY NAME";
+    cardData.name = inputs.n.value.trim() || "RIDER NAME";
 
     cardData.sns = inputs.sns.value.trim() || '---';
 
-    cardData.exp       = "馬歴 / Horse History: "   + (inputs.exp.value.trim()       || DEFAULT_PLACEHOLDER);
-    cardData.hard      = "主なハード / Platform: "   + (inputs.hard.value.trim()      || DEFAULT_PLACEHOLDER);
-    cardData.favHorse  = inputs.favHorse.value.trim()  || DEFAULT_PLACEHOLDER;
-    cardData.favJockey = inputs.favJockey.value.trim() || DEFAULT_PLACEHOLDER;
-    cardData.blood     = inputs.blood.value.trim()     || DEFAULT_PLACEHOLDER;
+    cardData.exp       = "競輪歴 / Keirin History: " + (inputs.exp.value.trim() || DEFAULT_PLACEHOLDER);
+    cardData.favRider  = inputs.favRider.value.trim()  || DEFAULT_PLACEHOLDER;
+    cardData.region    = inputs.region.value.trim()    || DEFAULT_PLACEHOLDER;
     cardData.bank      = inputs.bank.value.trim()      || DEFAULT_PLACEHOLDER;
-    cardData.coat      = inputs.coat.value.trim()      || DEFAULT_PLACEHOLDER;
     cardData.memorable = inputs.memorable.value.trim() || DEFAULT_PLACEHOLDER;
-    cardData.style   = inputs.style.value         || "---";
-    cardData.way     = inputs.way.value.trim()    || DEFAULT_PLACEHOLDER;
-    cardData.time    = inputs.time.value.trim()   || DEFAULT_PLACEHOLDER;
-    cardData.comment = inputs.com.value.trim()    || DEFAULT_COMMENT;
+    cardData.style     = inputs.style.value            || "---";
+    cardData.time      = inputs.time.value.trim()      || DEFAULT_PLACEHOLDER;
+    cardData.comment   = inputs.com.value.trim()       || DEFAULT_COMMENT;
 }
 
-// プレビューを遅延更新（高速入力に対応）
 function updatePreview() {
     clearTimeout(updateTimer);
     updateTimer = setTimeout(() => {
@@ -437,7 +390,6 @@ function updatePreview() {
 
 // ========== イベントハンドラ ==========
 
-// 枠番変更時にテーマ色とプレビューを更新する
 function updateWaku() {
     currentWaku = inputs.waku.value;
     const theme = WAKU_COLORS[currentWaku];
@@ -454,7 +406,6 @@ function updateWaku() {
     updatePreview();
 }
 
-// プロフィール画像を読み込む（トリミングモーダルへ渡す）
 function loadImage(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -496,8 +447,7 @@ function openCropModal(img) {
     cropSourceImage = img;
     cropOffsetX = 0;
     cropOffsetY = 0;
-    // 短辺が円径に収まる初期スケール
-    const minDim  = Math.min(img.naturalWidth, img.naturalHeight);
+    const minDim   = Math.min(img.naturalWidth, img.naturalHeight);
     const initScale = CROP_SIZE / minDim;
     cropScale = initScale;
     cropSlider.min   = initScale;
@@ -523,11 +473,9 @@ function drawCropPreview() {
 
     cropCtx.clearRect(0, 0, CROP_SIZE, CROP_SIZE);
 
-    // 暗背景
     cropCtx.fillStyle = '#111';
     cropCtx.fillRect(0, 0, CROP_SIZE, CROP_SIZE);
 
-    // 円形クリップで画像描画
     cropCtx.save();
     cropCtx.beginPath();
     cropCtx.arc(CROP_RADIUS, CROP_RADIUS, CROP_RADIUS, 0, Math.PI * 2);
@@ -543,7 +491,6 @@ function drawCropPreview() {
     );
     cropCtx.restore();
 
-    // 円枠
     cropCtx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
     cropCtx.lineWidth = 1;
     cropCtx.beginPath();
@@ -557,7 +504,6 @@ function scheduleCropDraw() {
     }
 }
 
-// ドラッグ（マウス）
 cropCanvas.addEventListener('mousedown', e => {
     cropIsDragging  = true;
     cropDragStartX  = e.clientX;
@@ -576,7 +522,6 @@ window.addEventListener('mousemove', e => {
 
 window.addEventListener('mouseup', () => { cropIsDragging = false; });
 
-// タッチ操作
 cropCanvas.addEventListener('touchstart', e => {
     const t = e.touches[0];
     cropIsDragging  = true;
@@ -597,13 +542,11 @@ window.addEventListener('touchmove', e => {
 
 window.addEventListener('touchend', () => { cropIsDragging = false; });
 
-// スライダー
 cropSlider.addEventListener('input', () => {
     cropScale = parseFloat(cropSlider.value);
     scheduleCropDraw();
 });
 
-// 確定：オフスクリーンCanvasで切り出しuserIconImageにセット
 cropConfirmBtn.addEventListener('click', () => {
     const outSize = ICON_RADIUS_INNER * 2;
     const ratio   = outSize / CROP_SIZE;
@@ -635,10 +578,8 @@ cropConfirmBtn.addEventListener('click', () => {
     finalImg.src = offCanvas.toDataURL('image/png');
 });
 
-// キャンセル
 cropCancelBtn.addEventListener('click', closeCropModal);
 
-// カードを2倍解像度で画像出力する
 function saveImage() {
     saveBtn.disabled = true;
     saveBtn.classList.add('saving');
@@ -655,7 +596,7 @@ function saveImage() {
             outputCtx.scale(2, 2);
             drawCard(outputCtx);
 
-            const filename = 'fsstriderscard.png';
+            const filename = 'keirincardprofile.png';
 
             outputCanvas.toBlob(blob => {
                 if (!blob) throw new Error('画像生成失敗');
@@ -687,7 +628,6 @@ function saveImage() {
     }, 0);
 }
 
-// コンテナサイズに合わせてキャンバスをスケーリングする
 function adjustScale() {
     const container = document.querySelector('.card-container');
     const scaleX    = container.offsetWidth  / (CARD_WIDTH  + 8);
@@ -698,7 +638,6 @@ function adjustScale() {
 
 // ========== ユーティリティ ==========
 
-// トースト通知を表示する
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className   = `toast ${type}`;
@@ -713,7 +652,6 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
-// 文字数カウンターを更新し、割合に応じてスタイルを変える
 function updateCounter(input, counter, maxLength) {
     const length = input.value.length;
     counter.textContent = `${length} / ${maxLength}`;
@@ -726,7 +664,6 @@ function updateCounter(input, counter, maxLength) {
     }
 }
 
-// テキストを指定幅で折り返し、最大行数を超えたら省略する
 function wrapText(ctx, text, x, y, maxWidth, lineHeight, maxLines) {
     const chars = text.split('');
     let line  = '';
@@ -769,14 +706,10 @@ const inputCounterPairs = [
     { input: inputs.n,         counter: counters.n,         max: 20  },
     { input: inputs.sns,       counter: counters.sns,       max: 30  },
     { input: inputs.exp,       counter: counters.exp,       max: 30  },
-    { input: inputs.hard,      counter: counters.hard,      max: 30  },
-    { input: inputs.favHorse,  counter: counters.favHorse,  max: 17  },
-    { input: inputs.favJockey, counter: counters.favJockey, max: 17  },
-    { input: inputs.blood,     counter: counters.blood,     max: 17  },
+    { input: inputs.favRider,  counter: counters.favRider,  max: 17  },
+    { input: inputs.region,    counter: counters.region,    max: 17  },
     { input: inputs.bank,      counter: counters.bank,      max: 17  },
-    { input: inputs.coat,      counter: counters.coat,      max: 17  },
     { input: inputs.memorable, counter: counters.memorable, max: 17  },
-    { input: inputs.way,       counter: counters.way,       max: 17  },
     { input: inputs.time,      counter: counters.time,      max: 15  },
     { input: inputs.com,       counter: counters.com,       max: 130 }
 ];
@@ -805,7 +738,6 @@ window.addEventListener('load', () => {
         updateCounter(input, counter, max);
     });
 
-    // 使い方アコーディオン
     const howtoToggle = document.getElementById('howto-toggle');
     const howtoBody   = document.getElementById('howto-body');
     if (howtoToggle && howtoBody) {

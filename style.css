@@ -116,7 +116,7 @@ body {
     100% { opacity: 0; }
 }
 
-/* ===== フェーズB: umahidari.jpg (4-8s / 25%-50%) ===== */
+/* ===== フェーズB: keirin1.jpg (4-8s / 25%-50%) ===== */
 .bp-img-a {
     z-index: 1;
     animation: bp-show-b 16s ease-in-out infinite;
@@ -149,7 +149,7 @@ body {
     100% { opacity: 0; }
 }
 
-/* ===== フェーズD: umagoal.png (12-16s / 75%-100%) ===== */
+/* ===== フェーズD: keirin2.jpg (12-16s / 75%-100%) ===== */
 .bp-img-b {
     z-index: 1;
     animation: bp-show-d 16s ease-in-out infinite;
