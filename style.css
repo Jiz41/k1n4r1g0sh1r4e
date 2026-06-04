@@ -214,25 +214,55 @@ body {
     100% { background-position: -200% center; }
 }
 
-/* タイトル下のゴールドライン */
-.bp-title::after {
-    content: '';
-    display: block;
-    width: 40%;
-    height: 1px;
-    margin: 8px auto 0;
-    background: linear-gradient(to right, transparent, #c8a96e, transparent);
+/* バナーブロック構造 */
+.bp-banner-block {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.bp-banner-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 0.4em;
+}
+
+/* 「貳ツ目」サブタイトル */
+.bp-title-sub {
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: clamp(9px, 2vw, 16px);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    padding-bottom: 5px;
+    background: linear-gradient(
+        160deg,
+        #c8a96e 0%, #e8d5a3 30%, #ffffff 50%, #e8d5a3 70%, #c8a96e 100%
+    );
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter:
+        drop-shadow(0 1px 0 rgba(100,70,0,0.6))
+        drop-shadow(0 4px 12px rgba(180,130,30,0.25));
+    animation: bp-gold-shimmer 5s linear infinite;
 }
 
 .bp-sub {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: clamp(8px, 1.7vw, 13px);
+    font-size: clamp(7px, 1.4vw, 11px);
     font-weight: 300;
-    letter-spacing: 0.42em;
-    white-space: nowrap;
-    text-align: center;
+    letter-spacing: normal;
+    text-align: justify;
+    text-align-last: justify;
     color: rgba(200,169,110,0.75);
     text-transform: uppercase;
+}
+
+/* keirin2.png：下部から引いてくる */
+.bp-img-b .bp-photo {
+    object-position: center bottom;
 }
 
 .input-container {

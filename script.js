@@ -324,22 +324,22 @@ function drawCard(targetCtx = ctx) {
     targetCtx.font = '900 13px sans-serif';
     targetCtx.fillText('競輪の好み / Favorite (Keirin)', CONTENT_LEFT + 12, SEC1_Y + 5);
 
-    const R1 = SEC1_Y + 28;   // 205
-    const R2 = R1 + 36;       // 241
+    const R1 = SEC1_Y + 46;   // 223
+    const R2 = R1 + 51;       // 274
     drawItem(CONTENT_LEFT, R1, '推し選手 / Fav Rider',              cardData.favRider,  330);
     drawItem(COL2_X,       R1, '好きな地区・ライン / Fav Region & Line', cardData.region,    330);
     drawItem(CONTENT_LEFT, R2, '好きなバンク / Fav Velodrome',       cardData.bank,      330);
     drawItem(COL2_X,       R2, '思い出のレース / Memorable',         cardData.memorable, 330);
 
     // プレイの傾向セクション
-    const SEC2_Y = R2 + 46;   // 323
+    const SEC2_Y = R2 + 76;   // 350
     targetCtx.fillStyle = '#1a1a1a';
     targetCtx.fillRect(CONTENT_LEFT, SEC2_Y, CONTENT_WIDTH, 21);
     targetCtx.fillStyle = '#e8e8e8';
     targetCtx.font = '900 13px sans-serif';
     targetCtx.fillText('プレイの傾向 / Playstyle (Game)', CONTENT_LEFT + 12, SEC2_Y + 5);
 
-    const R4 = SEC2_Y + 28;   // 351
+    const R4 = SEC2_Y + 46;   // 396
     drawItem(CONTENT_LEFT, R4, '好きな脚質 / Favorite Strategy',   cardData.style, 330);
     drawItem(COL2_X,       R4, 'よく遊ぶ時間帯 / Usual Play Time', cardData.time,  330);
 
