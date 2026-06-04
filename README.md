@@ -1,16 +1,16 @@
-# FS STRIDERS — Player Profile Generator
-
-Full Stride のプレイヤープロフィールカードを生成するファンメイドツールです。
+# 華耀天輪 己成拵 貳ツ目
+競輪勢プロフィールカードジェネレーター（ファンメイド）
 
 ## 使い方
 
-1. 枠番・背景パターン・各種情報を入力
+1. 車番・背景パターン・各種情報を入力
 2. プレビューを確認
 3. 「画像を保存する」でカードをダウンロード
 
 ## 注意
 
-本ツールはファンによる非公式ジェネレータです。  
-『FULL STRIDE』の名称は BLUE BULLET の商標または登録商標です。
+本ツールは競輪ファンによる画像ジェネレータです。  
+競輪は20歳になってから！！
 
-Created by ©[Musyn Reagan](https://x.com/Mushyn_Reagan) / [華耀東夷堂](https://x.com/Kayoutouidou01)
+
+Created by © [華耀東夷堂](https://x.com/Kayoutouidou01)
