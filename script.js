@@ -723,7 +723,22 @@ inputCounterPairs.forEach(({ input, counter, max }) => {
 
 inputs.style.addEventListener('change', updatePreview);
 saveBtn.addEventListener('click', saveImage);
-window.addEventListener('resize', adjustScale);
+window.addEventListener('resize', () => { adjustScale(); fitBpSub(); });
+
+// bp-subをbp-banner-rowの幅にscaleXで合わせる
+function fitBpSub() {
+    document.querySelectorAll('.bp-banner-block').forEach(block => {
+        const row = block.querySelector('.bp-banner-row');
+        const sub = block.querySelector('.bp-sub');
+        if (!row || !sub) return;
+        sub.style.transform = 'scaleX(1)';
+        const rowW = row.getBoundingClientRect().width;
+        const subW = sub.getBoundingClientRect().width;
+        if (rowW > 0 && subW > 0) {
+            sub.style.transform = `scaleX(${rowW / subW})`;
+        }
+    });
+}
 
 // ========== 起動処理 ==========
 window.addEventListener('load', () => {
@@ -737,6 +752,13 @@ window.addEventListener('load', () => {
     inputCounterPairs.forEach(({ input, counter, max }) => {
         updateCounter(input, counter, max);
     });
+
+    // フォント読み込み完了後に再計算
+    if (document.fonts) {
+        document.fonts.ready.then(fitBpSub);
+    } else {
+        setTimeout(fitBpSub, 400);
+    }
 
     const howtoToggle = document.getElementById('howto-toggle');
     const howtoBody   = document.getElementById('howto-body');

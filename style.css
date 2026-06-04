@@ -253,11 +253,21 @@ body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-size: clamp(7px, 1.4vw, 11px);
     font-weight: 300;
-    letter-spacing: normal;
-    text-align: justify;
-    text-align-last: justify;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
     color: rgba(200,169,110,0.75);
     text-transform: uppercase;
+    transform-origin: left center;
+    display: block;
+}
+
+/* 関連ツールリンクブロック */
+.m-related-tool {
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    font-size: 12px;
+    line-height: 1.8;
 }
 
 /* keirin2.png：下部から引いてくる */
