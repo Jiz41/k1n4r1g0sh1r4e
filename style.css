@@ -190,7 +190,7 @@ body {
 /* ===== テキストスタイル（JRA公式風） ===== */
 .bp-title {
     font-family: Georgia, 'Times New Roman', serif;
-    font-size: clamp(18px, 4.5vw, 38px);
+    font-size: clamp(22px, 5.5vw, 48px);
     font-weight: 700;
     letter-spacing: 0.28em;
     white-space: nowrap;
@@ -218,7 +218,7 @@ body {
 .bp-banner-block {
     display: inline-flex;
     flex-direction: column;
-    align-items: stretch;
+    align-items: flex-start;
     gap: 8px;
 }
 
@@ -231,7 +231,7 @@ body {
 /* 「貳ツ目」サブタイトル */
 .bp-title-sub {
     font-family: Georgia, 'Times New Roman', serif;
-    font-size: clamp(9px, 2vw, 16px);
+    font-size: clamp(12px, 2.6vw, 22px);
     font-weight: 700;
     letter-spacing: 0.18em;
     padding-bottom: 5px;
@@ -251,23 +251,51 @@ body {
 
 .bp-sub {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    font-size: clamp(7px, 1.4vw, 11px);
+    font-size: clamp(9px, 1.8vw, 14px);
     font-weight: 300;
     letter-spacing: 0.08em;
     white-space: nowrap;
     color: rgba(200,169,110,0.75);
     text-transform: uppercase;
-    transform-origin: left center;
     display: block;
 }
 
-/* 関連ツールリンクブロック */
-.m-related-tool {
-    margin-bottom: 14px;
-    padding-bottom: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.06);
+/* m-copyrightセクション共通 */
+.m-section {
+    padding: 16px 0;
+    border-top: 1px solid rgba(255,255,255,0.06);
+    line-height: 1.9;
+    text-align: left;
+}
+
+.m-section:first-child {
+    border-top: none;
+    padding-top: 0;
+}
+
+.m-section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--k-color);
+    opacity: 0.6;
+    margin-bottom: 6px;
+}
+
+.m-related {
     font-size: 12px;
+}
+
+.m-terms {
+    font-size: 11px;
+    color: #666;
     line-height: 1.8;
+}
+
+.m-credit {
+    font-size: 12px;
+    text-align: center;
+    padding-bottom: 24px;
 }
 
 /* keirin2.png：下部から引いてくる */

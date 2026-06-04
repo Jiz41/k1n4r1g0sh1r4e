@@ -725,17 +725,20 @@ inputs.style.addEventListener('change', updatePreview);
 saveBtn.addEventListener('click', saveImage);
 window.addEventListener('resize', () => { adjustScale(); fitBpSub(); });
 
-// bp-subをbp-banner-rowの幅にscaleXで合わせる
+// bp-subのfont-sizeをbp-banner-row幅に合わせてスケール
 function fitBpSub() {
     document.querySelectorAll('.bp-banner-block').forEach(block => {
         const row = block.querySelector('.bp-banner-row');
         const sub = block.querySelector('.bp-sub');
         if (!row || !sub) return;
-        sub.style.transform = 'scaleX(1)';
+        sub.style.fontSize = '';
+        sub.style.transform = '';
+        void sub.offsetWidth; // reflow
         const rowW = row.getBoundingClientRect().width;
         const subW = sub.getBoundingClientRect().width;
         if (rowW > 0 && subW > 0) {
-            sub.style.transform = `scaleX(${rowW / subW})`;
+            const fs = parseFloat(getComputedStyle(sub).fontSize);
+            sub.style.fontSize = (fs * rowW / subW).toFixed(2) + 'px';
         }
     });
 }
